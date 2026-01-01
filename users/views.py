@@ -7,7 +7,6 @@ from .serializers import UserSerializer
 
 @api_view(['POST', 'GET', 'PUT', 'DELETE'])
 def user_manager_view(request, pk=None):
-#Test des requetes avec thunder client tout est ok
     # POST
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
