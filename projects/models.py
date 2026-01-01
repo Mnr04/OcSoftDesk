@@ -21,3 +21,9 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+class Contributor(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('user', 'project')
+
