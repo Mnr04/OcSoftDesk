@@ -13,7 +13,7 @@ def project_manager_view(request, pk=None):
 
         if request.method == 'GET':
             projects = Project.objects.all()
-            serializer = ProjectSerializer(projects)
+            serializer = ProjectSerializer(projects, many=True)
             return Response(serializer.data)
 
         elif request.method == 'POST':
