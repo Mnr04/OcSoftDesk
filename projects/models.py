@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+import uuid
 
 class Project(models.Model):
     project_type = [
@@ -49,6 +50,7 @@ class Comment(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     issue = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
+    uuid = models.UUID(default=uuid.uuid4, editable=False, unique=True)
 
     def __str__(self):
         return f"Commentaire de {self.author}"
