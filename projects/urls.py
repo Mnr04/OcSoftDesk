@@ -1,16 +1,5 @@
-<<<<<<< Updated upstream
 from django.urls import path
 from .views import project_view, contributor_view, issue_view, comment_view
-=======
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import ProjectViewSet
-
-router = DefaultRouter()
-
-router.register('projects', ProjectViewSet, basename='project')
-
->>>>>>> Stashed changes
 
 urlpatterns = [
     path('projects/', project_view, name='project-list'),

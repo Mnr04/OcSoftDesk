@@ -1,19 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-<<<<<<< Updated upstream
 from rest_framework.response import Response
 from rest_framework import status
-=======
-from .models import Project
-from .serializers import ProjectSerializer
-from .permissions import IsAuthorOrReadOnly, IsProjectContributor
->>>>>>> Stashed changes
 
 from .models import Project, Contributor, Issue, Comment
 from .serializers import ProjectSerializer, ContributorSerializer, IssueSerializer, CommentSerializer
 
-<<<<<<< Updated upstream
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def project_view(request, pk=None):
@@ -207,8 +200,3 @@ def comment_view(request, pk=None):
 
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-=======
-    def get_queryset(self):
-        user = self.request.user
-        return Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
->>>>>>> Stashed changes

@@ -2,11 +2,6 @@ from rest_framework import serializers
 from .models import Project, Contributor, Issue, Comment
 
 class ProjectSerializer(serializers.ModelSerializer):
-<<<<<<< Updated upstream
-=======
-    author = serializers.StringRelatedField()
-
->>>>>>> Stashed changes
     class Meta:
         model = Project
         fields = ['id', 'title', 'description', 'type', 'author', 'created_time']
