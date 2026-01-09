@@ -13,4 +13,4 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
 
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(author=self.request.user)
