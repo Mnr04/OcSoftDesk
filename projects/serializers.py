@@ -16,7 +16,7 @@ class ContributorSerializer(serializers.Model.Serializer):
         fields = ['id','user','project']
 
 class IssueSerializer():
-    author. = serializers.StringRelatedFields(real_only=True)
+    author = serializers.StringRelatedFields(real_only=True)
     
     class Meta
         model = Issue
