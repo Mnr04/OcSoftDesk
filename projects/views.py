@@ -1,8 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .models import Project, Issue
-from .serializers import ProjectSerializer, IssueSerializer
+from .models import Project, Issue, Contributor
+from .serializers import ProjectSerializer, IssueSerializer, ContributorSerializer
 from .permissions import IsAuthorOrReadOnly, IsProjectContributor
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -26,3 +28,21 @@ class IssueViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+class ContributorViewSet(viewsets.ModelViewSet):
+    serializer_class = ContributorSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        projects = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
+        return Contributor.objects.filter(project__in=projects)
+
+    def perform_create(self, serializer):
+        project_id = self.request.data.get('project')
+        project = get_object_or_404(Project, pk=project_id)
+
+        if project.author != self.request.user:
+            raise PermissionDenied("Il faut l'auteur pour ajouter un contributeur")
+
+        serializer.save()
