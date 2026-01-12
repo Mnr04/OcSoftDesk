@@ -43,6 +43,6 @@ class ContributorViewSet(viewsets.ModelViewSet):
         project = get_object_or_404(Project, pk=project_id)
 
         if project.author != self.request.user:
-            raise PermissionDenied("Il faut l'auteur pour ajouter un contributeur")
+            raise PermissionDenied("Il faut etre l'auteur pour ajouter un contributeur")
 
         serializer.save()

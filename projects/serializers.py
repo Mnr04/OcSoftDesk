@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, Issue
+from .models import Project, Issue, Contributor
 
 class ProjectSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
@@ -15,7 +15,7 @@ class IssueSerializer(serializers.ModelSerializer):
         model = Issue
         fields = ['id', 'title', 'description', 'type', 'priority', 'status', 'project', 'author', 'created_time']
 
-class contributorSerializer(serializers.ModelSerializer):
+class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributor
         fields = ['id', 'user', 'project']
