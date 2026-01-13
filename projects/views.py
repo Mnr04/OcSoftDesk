@@ -54,7 +54,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         projects = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
-        return comment.objects.filter(issue__project__in=projects)
+        return Comment.objects.filter(issue__project__in=projects)
 
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(author=self.request.user)
