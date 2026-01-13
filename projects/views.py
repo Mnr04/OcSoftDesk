@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .models import Project, Issue, Contributor
-from .serializers import ProjectSerializer, IssueSerializer, ContributorSerializer
+from .models import Project, Issue, Contributor, Comment
+from .serializers import ProjectSerializer, IssueSerializer, ContributorSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly, IsProjectContributor
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
@@ -45,4 +45,16 @@ class ContributorViewSet(viewsets.ModelViewSet):
         if project.author != self.request.user:
             raise PermissionDenied("Il faut etre l'auteur pour ajouter un contributeur")
 
+        serializer.save()
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated, IsProjectContributor, IsAuthorOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        projects = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
+        return comment.objects.filter(issue__project__in=projects)
+
+    def perform_create(self, serializer):
         serializer.save()

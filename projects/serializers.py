@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, Issue, Contributor
+from .models import Project, Issue, Contributor, Comment
 
 class ProjectSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
@@ -19,3 +19,10 @@ class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributor
         fields = ['id', 'user', 'project']
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'description', 'issue', 'author', 'created_time', 'uuid']
