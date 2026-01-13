@@ -31,16 +31,17 @@ class Contributor(models.Model):
 class Issue(models.Model):
     priority = [('LOW', 'Low'), ('MEDIUM', 'Medium'), ('HIGH', 'High')]
     type = [('BUG', 'Bug'), ('FEATURE', 'Feature'), ('TASK', 'Task')]
-    status = [('TODO', 'To Do'), ('IN_PROGRESS', 'In Progress'), ('DONE', 'Done')]
+    status = [('TODO', 'To Do'), ('IN_PROGRESS', 'In Progress'), ('Finished', 'Finished')]
 
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048)
-    type = models.CharField(max_length=8, choices=type)
+    issue_type = models.CharField(max_length=8, choices=type)
     priority = models.CharField(max_length=10, choices=priority)
     status = models.CharField(max_length=15, choices=status, default='TODO')
     created_time = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
+    assignee = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_issues')
 
     def __str__(self):
         return self.title
