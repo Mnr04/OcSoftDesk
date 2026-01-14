@@ -1,10 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from .models import Project, Issue, Contributor, Comment
 from .serializers import ProjectSerializer, IssueSerializer, ContributorSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly, IsProjectContributor
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -46,6 +47,16 @@ class ContributorViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Il faut etre l'auteur pour ajouter un contributeur")
 
         serializer.save()
+
+    def destroy(self, request, pk=None):
+        contributor = get_object_or_404(Contributor, pk=pk)
+
+        if contributor.project.author != request.user:
+            raise PermissionDenied("")
+
+        contributor.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
