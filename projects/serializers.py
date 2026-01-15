@@ -13,7 +13,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ['id', 'title', 'description', 'type', 'priority', 'status', 'project', 'author', 'created_time']
+        fields = ['id', 'title', 'description', 'issue_type', 'priority', 'status', 'project', 'author', 'created_time']
 
 class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
