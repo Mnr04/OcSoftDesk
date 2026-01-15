@@ -28,7 +28,23 @@ class IssueViewSet(viewsets.ModelViewSet):
         return Issue.objects.filter(project__in=projects)
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        project = serializer.validated_data.get('project')
+        user = self.request.user
+
+        if project.author == user:
+            is_author = True
+        else:
+            is_author = False
+
+        if project.contributor_set.filter(user=user).exists():
+            is_contributor = False
+        else:
+            is_contributor = True
+
+        if not is_author and is_contributor:
+            raise PermissionDenied("Vous ne pouvez pas créer d'issue pour ce projet.")
+
+        serializer.save(author=user)
 
 class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
