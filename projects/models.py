@@ -30,12 +30,12 @@ class Contributor(models.Model):
 
 class Issue(models.Model):
     priority = [('LOW', 'Low'), ('MEDIUM', 'Medium'), ('HIGH', 'High')]
-    type = [('BUG', 'Bug'), ('AMELIORATION', 'amelioration'), ('Tache', 'tache')]
+    type_choices = [('BUG', 'Bug'), ('FEATURE', 'Feature'), ('tache', 'tache')]
     status = [('TODO', 'To Do'), ('IN_PROGRESS', 'In Progress'), ('Finished', 'Finished')]
 
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048)
-    issue_type = models.CharField(max_length=20, choices=type)
+    issue_type = models.CharField(max_length=20, choices=type_choices)
     priority = models.CharField(max_length=10, choices=priority)
     status = models.CharField(max_length=15, choices=status, default='TODO')
     created_time = models.DateTimeField(auto_now_add=True)

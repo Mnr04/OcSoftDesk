@@ -4,7 +4,7 @@ from .models import Project, Issue, Contributor, Comment
 from .serializers import ProjectSerializer, IssueSerializer, ContributorSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly, IsProjectContributor
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -37,11 +37,11 @@ class IssueViewSet(viewsets.ModelViewSet):
             is_author = False
 
         if project.contributor_set.filter(user=user).exists():
-            is_contributor = False
-        else:
             is_contributor = True
+        else:
+            is_contributor = False
 
-        if not is_author and is_contributor:
+        if not is_author and not is_contributor:
             raise PermissionDenied("Vous ne pouvez pas créer d'issue pour ce projet.")
 
         serializer.save(author=user)
@@ -49,6 +49,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
 
     def get_queryset(self):
         user = self.request.user
@@ -68,7 +69,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
         contributor = get_object_or_404(Contributor, pk=pk)
 
         if contributor.project.author != request.user:
-            raise PermissionDenied("")
+            raise PermissionDenied("vous ne pouvez pas supprimer ce contributor")
 
         contributor.delete()
 
@@ -84,4 +85,22 @@ class CommentViewSet(viewsets.ModelViewSet):
         return Comment.objects.filter(issue__project__in=projects)
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+
+        issue = serializer.validated_data.get('issue')
+        project = issue.project
+        user = self.request.user
+
+        if project.author == user:
+            is_author = True
+        else:
+            is_author = False
+
+        if project.contributor_set.filter(user=user).exists():
+            is_contributor = True
+        else:
+            is_contributor = False
+
+        if not is_author and not is_contributor:
+            raise PermissionDenied("Vous ne pouvez pas commenter cette issue")
+
+        serializer.save(author=user)
