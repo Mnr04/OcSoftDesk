@@ -4,7 +4,7 @@ from .models import Project, Issue, Contributor, Comment
 from .serializers import ProjectSerializer, IssueSerializer, ContributorSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly, IsProjectContributor
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 class ProjectViewSet(viewsets.ModelViewSet):
