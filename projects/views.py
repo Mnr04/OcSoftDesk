@@ -7,18 +7,35 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+
 class ProjectViewSet(viewsets.ModelViewSet):
+    """
+    Manages projects.
+    Only authors and contributors can view projects.
+    Only the author can update or delete a project.
+    """
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated, IsProjectContributor, IsAuthorOrReadOnly]
 
     def get_queryset(self):
+        """
+        Returns only projects where the user is an author or a contributor.
+        """
         user = self.request.user
         return Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
 
     def perform_create(self, serializer):
+        """
+        Sets the logged-in user as the author of the project.
+        """
         serializer.save(author=self.request.user)
 
+
 class IssueViewSet(viewsets.ModelViewSet):
+    """
+    Manages issues.
+    Users must be contributors to the project to view or create issues.
+    """
     serializer_class = IssueSerializer
     permission_classes = [IsAuthenticated, IsProjectContributor, IsAuthorOrReadOnly]
 
@@ -28,6 +45,9 @@ class IssueViewSet(viewsets.ModelViewSet):
         return Issue.objects.filter(project__in=projects)
 
     def perform_create(self, serializer):
+        """
+        Checks if the user is allowed to create an issue in this project.
+        """
         project = serializer.validated_data.get('project')
         user = self.request.user
 
@@ -46,6 +66,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 
         serializer.save(author=user)
 
+
 class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
     permission_classes = [IsAuthenticated]
@@ -57,6 +78,9 @@ class ContributorViewSet(viewsets.ModelViewSet):
         return Contributor.objects.filter(project__in=projects)
 
     def perform_create(self, serializer):
+        """
+        Ensures than only the project author can add a new contributor.
+        """
         project_id = self.request.data.get('project')
         project = get_object_or_404(Project, pk=project_id)
 
@@ -75,6 +99,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsProjectContributor, IsAuthorOrReadOnly]
@@ -85,6 +110,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         return Comment.objects.filter(issue__project__in=projects)
 
     def perform_create(self, serializer):
+        """
+        Checks if the user is on the project before commenting.
+        """
 
         issue = serializer.validated_data.get('issue')
         project = issue.project

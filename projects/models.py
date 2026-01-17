@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 import uuid
 
+
 class Project(models.Model):
     project_type = [
         ('BACKEND', 'Back-end'),
@@ -22,11 +23,14 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+
 class Contributor(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
+
     class Meta:
         unique_together = ('user', 'project')
+
 
 class Issue(models.Model):
     priority = [('LOW', 'Low'), ('MEDIUM', 'Medium'), ('HIGH', 'High')]
@@ -41,10 +45,13 @@ class Issue(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
-    assignee = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_issues')
+    assignee = models.ForeignKey(
+        to=User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_issues'
+        )
 
     def __str__(self):
         return self.title
+
 
 class Comment(models.Model):
     description = models.TextField(max_length=2048)

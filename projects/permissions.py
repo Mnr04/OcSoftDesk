@@ -1,6 +1,11 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+
 class IsAuthorOrReadOnly(BasePermission):
+    """
+    Allows read only access to everyone.
+    Only the author can edit or delete the object.
+    """
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
@@ -12,6 +17,9 @@ class IsAuthorOrReadOnly(BasePermission):
 
 
 class IsProjectContributor(BasePermission):
+    """
+    Checks if the user is a contributor or the author of the project.
+    """
     def has_object_permission(self, request, view, obj):
         from projects.models import Project, Issue, Comment
 
