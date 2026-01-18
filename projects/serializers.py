@@ -13,7 +13,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         """
         Sets the logged-in user as the author of the project.
         """
-        serializer.save(author=self.request.user)
+        project = serializer.save(author=self.request.user)
         Contributor.objects.create(user=self.request.user, project=project)
 
 
