@@ -10,6 +10,7 @@ djangorestframework-simplejwt = "*"
 
 [dev-packages]
 flake8 = "*"
+flake8-html = "*"
 
 [requires]
 python_version = "3.12"

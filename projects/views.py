@@ -24,12 +24,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
 
-    def perform_create(self, serializer):
-        """
-        Sets the logged-in user as the author of the project.
-        """
-        serializer.save(author=self.request.user)
-
 
 class IssueViewSet(viewsets.ModelViewSet):
     """
