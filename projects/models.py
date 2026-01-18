@@ -34,7 +34,7 @@ class Contributor(models.Model):
 
 class Issue(models.Model):
     priority = [('LOW', 'Low'), ('MEDIUM', 'Medium'), ('HIGH', 'High')]
-    type_choices = [('BUG', 'Bug'), ('FEATURE', 'Feature'), ('tache', 'tache')]
+    type_choices = [('BUG', 'Bug'), ('FEATURE', 'Feature'), ('TASK', 'Task')]
     status = [('TODO', 'To Do'), ('IN_PROGRESS', 'In Progress'), ('Finished', 'Finished')]
 
     title = models.CharField(max_length=128)
