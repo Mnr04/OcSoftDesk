@@ -9,13 +9,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ['id', 'title', 'description', 'type', 'author', 'created_time']
 
-    def perform_create(self, serializer):
-        """
-        Sets the logged-in user as the author of the project.
-        """
-        project = serializer.save(author=self.request.user)
-        Contributor.objects.create(user=self.request.user, project=project)
-
 
 class IssueSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
