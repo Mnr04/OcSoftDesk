@@ -59,7 +59,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## Authentification Guide
+## Authentication Guide
 This API uses JWT Authentication. You must obtain a token to access protected endpoints.
 
 ### 1. Register a new user (Signup)
@@ -70,9 +70,12 @@ Permissions: Public
 Body:
 ```JSON
 {
-    "username": "MyUser",
-    "password": "StrongPassword123!",
-    "age": 25,
+    "username": "User",
+    "password": "Password",
+    "first_name": "martin",
+    "last_name": "pierre",
+    "email": "user@example.com",
+    "age": 18,
     "can_be_contacted": true,
     "can_data_be_shared": true
 }
@@ -93,6 +96,64 @@ For all other requests (Projects, Issues, etc.), you must include the token in t
 
 Key: Authorization
 Value: Bearer YOUR_ACCESS_TOKEN
+
+### 4. API Documentation & Examples
+
+Here are the JSON bodies you need to send to create resources.
+
+**Create a project**
+
+```JSON
+{
+    "title": "Super iOS App",
+    "description": "Development of the new mobile banking app.",
+    "type": "IOS"
+}
+```
+Note: type choices are: BACKEND, FRONTEND, IOS, ANDROID.
+Note: The logged-in user automatically becomes the Author and a Contributor
+
+**Create an issue**
+
+```JSON
+{
+    "title": "Login Screen Crash",
+    "description": "App crashes when clicking the button.",
+    "issue_type": "BUG",
+    "priority": "HIGH",
+    "status": "TODO",
+    "project": 1,
+    "assignee": 2
+}
+```
+Fields:
+
+issue_type: BUG, FEATURE, TASK
+priority: LOW, MEDIUM, HIGH
+status: TODO, IN_PROGRESS, Finished
+project: The ID of the project.
+assignee: (Optional) The ID of the user assigned to this issue (must be a contributor).
+
+**Create a Comment**
+
+```JSON
+{
+    "description": "I have fixed this bug.",
+    "issue": 5
+}
+```
+Note: You must be a contributor of the project linked to issue #5 to post here.
+
+**Add a Contributor to a Project**
+
+```JSON
+{
+    "user": 3,
+    "project": 1
+}
+```
+Note: This adds User #3 to Project #1.
+
 
 ##  API Endpoints
 
@@ -116,3 +177,4 @@ Value: Bearer YOUR_ACCESS_TOKEN
 ### Contributors
 * **List / Add:** `GET` / `POST` -> `/api/contributors/`
 * **Remove:** `DELETE` -> `/api/contributors/{id}/`
+
