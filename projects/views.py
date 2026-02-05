@@ -22,7 +22,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         Returns only projects where the user is an author or a contributor.
         """
         user = self.request.user
-        return Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
+        queryset = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
+        return queryset.distinct()
 
     def perform_create(self, serializer):
         """
