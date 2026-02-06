@@ -22,7 +22,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         Returns only projects where the user is an author or a contributor.
         """
         user = self.request.user
-        queryset = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
+        queryset = (
+            Project.objects.select_related('author').filter(author=user)
+            | Project.objects.select_related('author').filter(contributor__user=user)
+            )
         return queryset.distinct()
 
     def perform_create(self, serializer):
@@ -44,7 +47,7 @@ class IssueViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         projects = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
-        return Issue.objects.filter(project__in=projects)
+        return Issue.objects.select_related('author').filter(project__in=projects)
 
     def perform_create(self, serializer):
         """
@@ -109,7 +112,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         projects = Project.objects.filter(author=user) | Project.objects.filter(contributor__user=user)
-        return Comment.objects.filter(issue__project__in=projects)
+        return Comment.objects.select_related('author').filter(issue__project__in=projects)
 
     def perform_create(self, serializer):
         """

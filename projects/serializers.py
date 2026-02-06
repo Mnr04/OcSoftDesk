@@ -67,7 +67,7 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Comment
